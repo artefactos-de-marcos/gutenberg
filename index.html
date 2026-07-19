@@ -1,10 +1,12 @@
-Aquí tienes el código con la estética de la línea de tiempo completamente rediseñada. 
+Aquí tienes el código actualizado con todas tus solicitudes implementadas. 
 
-### Cambios implementados:
-1. **Línea de tiempo unificada:** Eliminé las tres líneas separadas. Ahora hay una sola línea horizontal, gruesa y continua que atraviesa toda la pantalla, uniendo las tres eras. Los 30 hitos están distribuidos cronológicamente a lo largo de esta línea única.
-2. **Alineación perfecta:** Las cajas de características (sellos) ahora están alineadas en la parte inferior, garantizando que la línea de tiempo sea recta y parezca una regla histórica real, sin importar cuántas etiquetas tenga cada era arriba.
-3. **Paréntesis superpuestos:** Los paréntesis son ahora gigantes, de color rojo intenso (`#c0392b`) y se superponen directamente sobre la línea de tiempo, interrumpiéndola visualmente para marcar el "paréntesis" histórico.
-4. **Hitos por color:** Los puntos de la línea de tiempo ahora tienen el color de su era (marrón, rojo oscuro, verde oscuro) para dar una pista visual sutil antes de pasar la lupa. Al pasar la lupa, se vuelven dorados.
+### Cambios principales:
+1. **Separación y jerarquía:** He aumentado la altura del área de la línea de tiempo y los márgenes para que las etiquetas (características) estén bien separadas de la línea y la lupa no tape nada importante.
+2. **Paréntesis asociados a la era central:** Los grandes paréntesis rojos ya no cruzan la línea de tiempo. Ahora enmarcan elegantemente el segmento central y sus etiquetas en la zona superior.
+3. **Hitos como líneas perpendiculares:** Los puntos se han reemplazado por líneas verticales negras que cruzan la línea de tiempo, como marcas de ticks en una regla histórica.
+4. **Lupa de pantalla completa con centro exacto:** La lupa ahora es `position: fixed` y se puede arrastrar por toda la página. El punto exacto de activación es el centro del cristal (he añadido una pequeña diana roja en el centro para que el usuario lo sepa).
+5. **Iluminación cruzada Pre/Post:** He implementado un mapeo conceptual (ej. `re-creativa` se mapea con `remezcla`). Al iluminar un hito Preparentético, las características de esa era se iluminan, y **simultáneamente se iluminan las características equivalentes en el Posparentético** (y viceversa), demostrando visualmente la semejanza entre ambas eras.
+6. **Reemplazo de hito:** "Danzas rituales" ha sido sustituido por "Canto gregoriano", que tiene un artículo completo y con imagen en Wikipedia.
 
 Aquí tienes el código completo:
 
@@ -112,12 +114,12 @@ Aquí tienes el código completo:
             margin: 0 auto 60px auto;
             width: 100%;
             position: relative;
-            height: 180px; /* Altura fija para la zona interactiva */
+            height: 280px; /* Altura aumentada para dar espacio */
         }
 
         .eras-row {
             display: flex;
-            align-items: flex-end; /* Alinea los cuadros abajo para que la línea sea recta */
+            align-items: flex-end; /* Alinea los cuadros abajo */
             width: 100%;
             height: 100%;
             position: relative;
@@ -130,7 +132,7 @@ Aquí tienes el código completo:
             flex-direction: column;
             align-items: center;
             text-align: center;
-            padding-bottom: 40px; /* Espacio para la línea y los puntos */
+            padding-bottom: 90px; /* Espacio grande para separar etiquetas de la línea */
         }
 
         .era-title {
@@ -158,6 +160,7 @@ Aquí tienes el código completo:
             justify-content: center;
             max-width: 90%;
             min-height: 60px; /* Altura mínima para igualar cajas */
+            margin-bottom: 20px; /* Margen extra inferior */
         }
         .tag {
             display: flex;
@@ -188,7 +191,7 @@ Aquí tienes el código completo:
         /* Línea de tiempo continua */
         .timeline-line {
             position: absolute;
-            bottom: 40px; /* Alineada con el padding-bottom de era-section */
+            bottom: 60px; /* Separada del fondo */
             left: 0;
             width: 100%;
             height: 6px;
@@ -198,61 +201,59 @@ Aquí tienes el código completo:
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Grandes Paréntesis Rojos */
+        /* Grandes Paréntesis Rojos (Asociados a la era central) */
         .big-parenthesis {
             position: absolute;
             font-family: 'Times New Roman', serif;
-            font-size: 14em;
+            font-size: 12em;
             font-weight: 700;
             color: var(--bright-red);
             line-height: 1;
-            z-index: 2; /* Por encima de la línea */
+            z-index: 2; 
             text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1);
-            pointer-events: none; /* Para que no bloqueen la lupa */
-            bottom: -20px; /* Ajuste para que interrumpan la línea visualmente */
-            transform: translateX(-50%);
+            pointer-events: none; 
+            top: 0;
+            height: 180px; /* Ocupan la zona superior, sin tocar la línea */
+            display: flex;
+            align-items: center;
         }
-        .paren-left { left: 33.33%; }
-        .paren-right { left: 66.66%; }
+        .paren-left { left: 33.33%; transform: translateX(-100%); }
+        .paren-right { left: 66.66%; transform: translateX(0%); }
 
-        /* Hitos en la línea */
+        /* Hitos (Líneas perpendiculares) */
         .milestone {
             position: absolute;
-            bottom: 37px; /* Centrado en la línea (40px - 3px) */
+            bottom: 48px; /* Centrado en la línea (60px - 12px) */
             transform: translateX(-50%);
-            width: 14px;
-            height: 14px;
-            border: 3px solid var(--paper-color);
-            border-radius: 50%;
+            width: 4px;
+            height: 24px; /* Altura del tick */
+            background-color: var(--ink-color);
             cursor: pointer;
             transition: all 0.2s;
             z-index: 1;
+            border-radius: 2px;
         }
-        .milestone.pre { background-color: var(--pre-color); }
-        .milestone.paren { background-color: var(--paren-color); }
-        .milestone.post { background-color: var(--post-color); }
-
         .milestone:hover, .milestone.active {
             background-color: var(--gold-color);
             box-shadow: 0 0 10px var(--gold-color);
-            transform: translateX(-50%) scale(1.6);
+            transform: translateX(-50%) scale(1.5);
             z-index: 3;
         }
 
-        /* Lupa */
+        /* Lupa (Flotante por toda la página) */
         #magnifier {
-            position: absolute;
-            width: 90px;
-            height: 90px;
+            position: fixed; /* Fija a la ventana, no al contenedor */
+            width: 100px;
+            height: 100px;
             border: 4px solid var(--ink-color);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(2px);
             cursor: grab;
-            z-index: 10;
+            z-index: 1000; /* Por encima de todo */
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            top: 50px; 
-            left: 50px; 
+            top: 200px; /* Posición inicial */
+            left: 200px; /* Posición inicial */
             display: none; 
             pointer-events: auto;
         }
@@ -260,13 +261,24 @@ Aquí tienes el código completo:
         #magnifier::after {
             content: '';
             position: absolute;
-            bottom: -18px;
-            right: -12px;
-            width: 24px;
-            height: 35px;
+            bottom: -20px;
+            right: -15px;
+            width: 26px;
+            height: 38px;
             background: var(--ink-color);
             border-radius: 4px;
             transform: rotate(-45deg);
+        }
+        /* Centro de la lupa (Punto de activación) */
+        #magnifier::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 12px; height: 12px;
+            border: 2px solid var(--bright-red);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(192, 57, 43, 0.3);
         }
 
         /* Panel de Información */
@@ -309,7 +321,7 @@ Aquí tienes el código completo:
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 1001;
             left: 0; top: 0;
             width: 100%; height: 100%;
             background-color: rgba(43, 27, 23, 0.8);
@@ -341,10 +353,10 @@ Aquí tienes el código completo:
             .eras-row { flex-direction: column; align-items: center; height: auto; }
             .era-section { padding-bottom: 20px; border-bottom: 1px dashed #8f8366; width: 100%; }
             .era-section:last-child { border-bottom: none; }
-            .timeline-line { display: none; } /* Ocultar línea en móvil */
+            .timeline-line { display: none; } 
             .big-parenthesis { display: none; }
             #magnifier { display: none !important; }
-            .milestone { position: relative; bottom: auto; transform: none; display: inline-block; margin: 5px; }
+            .milestone { position: relative; bottom: auto; transform: none; display: inline-block; margin: 5px; width: 10px; height: 10px; border-radius: 50%; }
             .milestone:hover, .milestone.active { transform: scale(1.4); }
             .timeline-wrapper { height: auto; margin-bottom: 30px; }
             #info-panel { flex-direction: column; align-items: center; text-align: center; }
@@ -366,7 +378,7 @@ Aquí tienes el código completo:
             </button>
         </h1>
         <p class="instructions">
-            Arrastra la lupa sobre la línea de tiempo para descubrir los hitos culturales. Al enfocar un hito, sus características se iluminarán.
+            Arrastra la lupa por la pantalla para descubrir los hitos culturales. Al enfocar un hito, sus características se iluminarán.
         </p>
     </header>
 
@@ -417,10 +429,10 @@ Aquí tienes el código completo:
         <!-- Paréntesis Gigantes Rojos -->
         <div class="big-parenthesis paren-left">(</div>
         <div class="big-parenthesis paren-right">)</div>
-
-        <!-- Lupa -->
-        <div id="magnifier"></div>
     </div>
+
+    <!-- Lupa (Movida fuera del wrapper para flotar por toda la página) -->
+    <div id="magnifier"></div>
 
     <!-- Panel de Información -->
     <div id="info-panel">
@@ -469,19 +481,35 @@ Aquí tienes el código completo:
             'muestreo': '#00FA9A', 'remezcla': '#1E90FF', 'préstamo': '#7B68EE', 'reconfiguración': '#BA55D3', 'apropiación': '#FF6347', 'recontextualización': '#40E0D0'
         };
 
-        // 30 Hitos (10 por era) con término de búsqueda para Wikipedia
+        // Mapeo conceptual Pre <-> Post para iluminación cruzada
+        const tagMapping = {
+            're-creativa': 'remezcla',
+            'remezcla': 're-creativa',
+            'colectiva': 'muestreo',
+            'muestreo': 'colectiva',
+            'con-textual': 'recontextualización',
+            'recontextualización': 'con-textual',
+            'inestable': 'reconfiguración',
+            'reconfiguración': 'inestable',
+            'tradicional': 'préstamo',
+            'préstamo': 'tradicional',
+            'performance': 'apropiación',
+            'apropiación': 'performance'
+        };
+
+        // 30 Hitos (10 por era)
         const milestones = [
             // Preparentético
             { era: 'pre', year: '30000 a.C.', title: 'Arte rupestre', search: 'Arte rupestre', tags: ['tradicional', 'colectiva', 'performance'] },
             { era: 'pre', year: '3300 a.C.', title: 'Escritura cuneiforme', search: 'Escritura cuneiforme', tags: ['inestable', 'con-textual'] },
             { era: 'pre', year: '800 a.C.', title: 'Ilíada de Homero', search: 'Ilíada', tags: ['re-creativa', 'tradicional', 'performance'] },
             { era: 'pre', year: '500 a.C.', title: 'Teatro griego', search: 'Teatro griego', tags: ['colectiva', 'performance', 'con-textual'] },
+            { era: 'pre', year: '900', title: 'Canto gregoriano', search: 'Canto gregoriano', tags: ['colectiva', 'performance', 'tradicional'] },
             { era: 'pre', year: '1000', title: 'Canción de gesta', search: 'Canción de gesta', tags: ['inestable', 're-creativa', 'tradicional'] },
-            { era: 'pre', year: '1100', title: 'Trobadors', search: 'Trovador', tags: ['performance', 'colectiva'] },
+            { era: 'pre', year: '1100', title: 'Trovadores', search: 'Trovador', tags: ['performance', 'colectiva'] },
             { era: 'pre', year: '1200', title: 'Cuentos folclóricos', search: 'Cuento de hadas', tags: ['tradicional', 'inestable', 're-creativa'] },
             { era: 'pre', year: '1300', title: 'Música trovadoresca', search: 'Música medieval', tags: ['re-creativa', 'performance'] },
             { era: 'pre', year: '1400', title: 'Mitología nórdica', search: 'Mitología nórdica', tags: ['tradicional', 'colectiva', 'con-textual'] },
-            { era: 'pre', year: '1450', title: 'Danzas rituales', search: 'Danza ritual', tags: ['colectiva', 'performance', 'tradicional'] },
             // Paréntesis
             { era: 'paren', year: '1455', title: 'Biblia de Gutenberg', search: 'Biblia de Gutenberg', tags: ['estable', 'individual', 'composición'] },
             { era: 'paren', year: '1605', title: 'Don Quijote', search: 'Don Quijote de la Mancha', tags: ['original', 'individual', 'canónica'] },
@@ -515,12 +543,10 @@ Aquí tienes el código completo:
             const parenMilestones = milestones.filter(m => m.era === 'paren');
             const postMilestones = milestones.filter(m => m.era === 'post');
 
-            // Función para crear y posicionar hitos
             const createDots = (arr, startPercent, endPercent) => {
                 arr.forEach((m, index) => {
                     const dot = document.createElement('div');
                     dot.className = `milestone ${m.era}`;
-                    // Calcular posición en porcentaje dentro del rango de la era
                     const pos = startPercent + ((index + 1) / (arr.length + 1)) * (endPercent - startPercent);
                     dot.style.left = `${pos}%`;
                     dot.dataset.search = m.search;
@@ -530,17 +556,25 @@ Aquí tienes el código completo:
                     dot.dataset.era = m.era;
                     dot.id = `m-${m.era}-${index}`;
                     
-                    // Click/Tap para móvil
                     dot.addEventListener('click', () => activateMilestone(dot));
                     
                     wrapper.appendChild(dot);
                 });
             };
 
-            // Distribuir: Pre (2% a 30%), Paren (36% a 64%), Post (70% a 98%)
             createDots(preMilestones, 2, 30);
             createDots(parenMilestones, 36, 64);
             createDots(postMilestones, 70, 98);
+        }
+
+        // Función auxiliar para iluminar etiquetas
+        function highlightTag(era, tagText) {
+            const tagEl = document.querySelector(`#tags-${era} .tag[data-tag="${tagText}"]`);
+            if (tagEl) {
+                tagEl.classList.add('active');
+                tagEl.style.backgroundColor = tagColors[tagText];
+                tagEl.style.color = '#fff';
+            }
         }
 
         // Activar hito: buscar info e iluminar etiquetas
@@ -552,7 +586,7 @@ Aquí tienes el código completo:
             document.querySelectorAll('.milestone.active').forEach(m => m.classList.remove('active'));
             dot.classList.add('active');
 
-            // Iluminar etiquetas
+            // Limpiar etiquetas activas
             document.querySelectorAll('.tag.active').forEach(t => {
                 t.classList.remove('active');
                 t.style.backgroundColor = '';
@@ -561,12 +595,18 @@ Aquí tienes el código completo:
 
             const tags = JSON.parse(dot.dataset.tags);
             const era = dot.dataset.era;
+            
+            // Iluminar etiquetas del hito actual
             tags.forEach(tagText => {
-                const tagEl = document.querySelector(`#tags-${era} .tag[data-tag="${tagText}"]`);
-                if (tagEl) {
-                    tagEl.classList.add('active');
-                    tagEl.style.backgroundColor = tagColors[tagText];
-                    tagEl.style.color = '#fff';
+                highlightTag(era, tagText);
+                
+                // Iluminación cruzada: Si es Pre o Post, iluminar la etiqueta equivalente en la otra era
+                if (era === 'pre' || era === 'post') {
+                    const mappedTag = tagMapping[tagText];
+                    const oppositeEra = era === 'pre' ? 'post' : 'pre';
+                    if (mappedTag) {
+                        highlightTag(oppositeEra, mappedTag);
+                    }
                 }
             });
 
@@ -595,38 +635,46 @@ Aquí tienes el código completo:
             }
         }
 
-        // Lógica de la Lupa (Escritorio)
+        // Lógica de la Lupa (Flotante por toda la página)
         const magnifier = document.getElementById('magnifier');
-        const wrapper = document.getElementById('timelineWrapper');
         let isDragging = false;
+        let offsetX = 0, offsetY = 0;
 
         magnifier.addEventListener('mousedown', (e) => {
             isDragging = true;
             magnifier.style.cursor = 'grabbing';
+            // Calcular el offset del ratón respecto a la esquina superior izquierda de la lupa
+            const rect = magnifier.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
             e.preventDefault();
         });
 
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             
-            const rect = wrapper.getBoundingClientRect();
-            // 45 = mitad de la lupa (90px / 2)
-            let x = e.clientX - rect.left - 45; 
-            let y = e.clientY - rect.top - 45;
+            // Mover la lupa por toda la ventana
+            let x = e.clientX - offsetX;
+            let y = e.clientY - offsetY;
             
-            // Limitar al contenedor
-            x = Math.max(0, Math.min(x, rect.width - 90));
-            y = Math.max(0, Math.min(y, rect.height - 90));
+            // Limitar a los bordes de la ventana
+            x = Math.max(0, Math.min(x, window.innerWidth - 100)); // 100 = ancho de la lupa
+            y = Math.max(0, Math.min(y, window.innerHeight - 100));
             
             magnifier.style.left = `${x}px`;
             magnifier.style.top = `${y}px`;
 
-            // Detectar colisión con hitos
-            const magRect = magnifier.getBoundingClientRect();
+            // El centro exacto de la lupa es (x + 50, y + 50) porque la lupa es 100x100
+            const centerX = x + 50;
+            const centerY = y + 50;
+
+            // Detectar colisión: el centro de la lupa cae dentro de un hito
             document.querySelectorAll('.milestone').forEach(dot => {
                 const dotRect = dot.getBoundingClientRect();
-                // Colisión simple caja vs caja
-                if (!(magRect.right < dotRect.left || magRect.left > dotRect.right || magRect.bottom < dotRect.top || magRect.top > dotRect.bottom)) {
+                // Comprobar si el centro de la lupa está dentro de la caja del hito
+                // Añadimos 2px de tolerancia en X porque la línea es muy fina (4px)
+                if (centerX >= dotRect.left - 2 && centerX <= dotRect.right + 2 && 
+                    centerY >= dotRect.top && centerY <= dotRect.bottom) {
                     activateMilestone(dot);
                 }
             });
